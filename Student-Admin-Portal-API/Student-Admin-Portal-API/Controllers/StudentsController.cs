@@ -28,7 +28,7 @@ namespace Student_Admin_Portal_API.Controllers
             return Ok(mapper.Map<List<StudentDto>>(students));
         }
         [HttpGet]
-        [Route("[controller]/{studentId:guid}")]
+        [Route("[controller]/{studentId:guid}"), ActionName("GetStudentAsync")]
         public async Task<IActionResult> GetStudentAsync([FromRoute] Guid studentId)
         {
             var student = await studentRepository.GetStudentAsync(studentId);
@@ -64,6 +64,13 @@ namespace Student_Admin_Portal_API.Controllers
                 return Ok(mapper.Map<StudentDto>(student));
             }
             return NotFound();
+        }
+        [HttpPost]
+        [Route("[controller]/Add")]
+        public async Task<IActionResult> AddStudentAsync([FromBody] AddStudentRequestDto request) 
+        {
+            var student = await studentRepository.AddStudent(mapper.Map<Student>(request));
+            return CreatedAtAction(nameof(GetStudentAsync), new {studentId= student.Id}, mapper.Map<StudentDto>(student));
         }
     }
 }
